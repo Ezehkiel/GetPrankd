@@ -112,6 +112,6 @@ public class GetPrankd {
      */
     public static void main(String[] args) {
 
-        GetPrankd application = new GetPrankd();
+        new GetPrankd();
     }
 }
