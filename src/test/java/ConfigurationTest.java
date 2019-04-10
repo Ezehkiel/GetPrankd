@@ -8,7 +8,7 @@ import java.util.List;
 public class ConfigurationTest {
 
     @Test
-    public void testConfFileReader() {
+    public void configurationShouldBeTheRightOnes() {
         File testConfFile = new File("./conf/conf.txt");
         Configuration configuration = new Configuration();
         List<String> confTest = new ArrayList<String>();
@@ -29,7 +29,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testVictimsFileReader() {
+    public void victimsShouldBeTheRightOnes() {
         File mailFile = new File("./conf/victims.txt");
         Configuration config = new Configuration();
 
@@ -40,7 +40,7 @@ public class ConfigurationTest {
     }
 
     @Test
-    public void testPranksFileReader() {
+    public void pranksShouldBeTheRightOnes() {
         File prankFile = new File("./conf/pranks.txt");
         Configuration config = new Configuration();
 
