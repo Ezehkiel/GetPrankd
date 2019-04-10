@@ -31,6 +31,21 @@ public class SMTPClient {
             /* The server repond with acknowledgments (code 250) */
             checkResponseCode("250");
 
+            // IF THE SERVER RESPOND WITH A "250-AUTH LOGIN" :
+            /*
+            ...
+            250-AUTH PLAIN LOGIN CRAM-MD5
+            AUTH LOGIN
+            334 VXNlcm5hbWU6
+            MjZmZmY1ZWM3ZGRjMzM=
+            334 UGFzc3dvcmQ6
+            MjQzNTQxZTBhMmQ2Y2I=
+            235 2.0.0 OK
+            MAIL FROM: <from@smtp.mailtrap.io>
+            ...
+            */
+
+
             /* The client continues with MAIL FROM: */
             sendMailFrom(mail.getFrom());
 
@@ -90,7 +105,7 @@ public class SMTPClient {
     }
 
     private void sendRcptTo(List<Victim> rcptTo) {
-        for(Victim rcpt : rcptTo) {
+        for (Victim rcpt : rcptTo) {
             this.output.println("RCPT TO: " + rcpt.getMailAddress());
             System.out.println("RCPT TO: " + rcpt.getMailAddress());
             this.output.flush();
@@ -112,7 +127,7 @@ public class SMTPClient {
         this.output.flush();
 
 
-        for(int j = 0; j < tos.size(); ++j) {
+        for (int j = 0; j < tos.size(); ++j) {
             if (j == 0) {
                 this.output.print("To: " + tos.get(j).getMailAddress());
                 System.out.print("To: " + tos.get(j).getMailAddress());
