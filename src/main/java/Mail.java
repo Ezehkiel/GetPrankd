@@ -1,7 +1,7 @@
 import java.util.List;
 
 /**
- * This class represents the DATA part of a fake mail
+ * This class represents the DATA part of a mail. It contains a sender, a list of recipients and a prank message.
  */
 public class Mail {
     private Victim from;

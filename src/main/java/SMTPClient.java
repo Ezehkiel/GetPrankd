@@ -6,15 +6,17 @@ import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * This class is responsible for the communication with the SMTP server.
+ */
 public class SMTPClient {
 
     private Socket connection;
     private BufferedReader input;
     private PrintWriter output;
 
-    public SMTPClient(String host, int port, Mail mail) throws Exception {
+    public SMTPClient(String host, int port, Mail mail) {
 
-        String line;
         try {
             this.connection = new Socket(host, port);
             this.input = new BufferedReader(new InputStreamReader(this.connection.getInputStream()));
@@ -29,7 +31,6 @@ public class SMTPClient {
             /* The server repond with acknowledgments (code 250) */
             checkResponseCode("250");
 
-
             /* The client continues with MAIL FROM: */
             sendMailFrom(mail.getFrom());
 
@@ -38,8 +39,6 @@ public class SMTPClient {
 
             /* The client continues with RCPT TO: */
             sendRcptTo(mail.getTo());
-
-
 
             /* The client continues with DATA */
             sendData();
@@ -50,15 +49,12 @@ public class SMTPClient {
             /* The client then sends the message */
             sendMessage(mail.getFrom(), mail.getTo(), mail.getMessage().getMessage());
 
-
             this.input.close();
             this.output.flush();
             this.output.close();
 
-
-        } catch (IOException ioException) {
-            throw new Exception("INVALID SERVER CONFIGURATION : a connection cannot be made. " +
-                    "Please verify the server configuration.");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
     }
 

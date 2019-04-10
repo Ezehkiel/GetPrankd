@@ -2,7 +2,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigurationTest {
@@ -11,9 +10,7 @@ public class ConfigurationTest {
     public void configurationShouldBeTheRightOnes() {
         File testConfFile = new File("./conf/conf.txt");
         Configuration configuration = new Configuration();
-        List<String> confTest = new ArrayList<String>();
-
-        confTest = configuration.retrieveConf(testConfFile, "=");
+        List<String> confTest = configuration.retrieveConf(testConfFile, "=");
 
         String testHost = confTest.get(0);
         int testPort = Integer.parseInt(confTest.get(1));
