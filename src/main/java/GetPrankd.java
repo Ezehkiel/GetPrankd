@@ -37,7 +37,7 @@ public class GetPrankd {
 
         /* Creates Prank objects from the given pranks file */
         this.pranks = new ArrayList<Prank>();
-        for (String message : config.getpranks()) {
+        for (String message : config.getPranks()) {
             this.pranks.add(new Prank(message));
         }
 
