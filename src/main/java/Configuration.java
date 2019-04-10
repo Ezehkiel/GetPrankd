@@ -2,6 +2,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is responsible for retrieving the following configurations from the config files :
+ * the SMTP server IP address and port, the number of groups, the mail addresses and the pranks.
+ */
 public class Configuration {
 
     /* These constants define where the configuration files will be stored. The path is relative

@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class uses the data gathered from Configuration to create Victim, Group and Prank objects. Once everything is
+ * ready, Mail objects are created and passed to the SMTPClient.
+ */
 public class GetPrankd {
 
     private static final int MIN_GROUP_SIZE = 3;

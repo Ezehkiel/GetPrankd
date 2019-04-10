@@ -1,7 +1,11 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class represents a group of victims, made of a sender and recipients.
+ */
 public class Group {
+
     private Victim sender;
     private List<Victim> recipients = new ArrayList<Victim>();
 
