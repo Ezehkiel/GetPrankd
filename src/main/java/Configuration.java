@@ -30,52 +30,21 @@ public class Configuration {
         File confFile = new File(CONF);
         File mailFile = new File(VICTIMS);
         File prankFile = new File(PRANKS);
-        List<String> conf = new ArrayList<String>();
 
-        try {
+        /* Gets server configuration and number of groups */
+        List<String> conf = retrieveConf(confFile, confDelimiter);
 
-            /* Gets server configuration and groups number */
-            BufferedReader confReader = new BufferedReader(new FileReader(confFile));
-            String line;
+        this.host = conf.get(0);
+        this.port = Integer.parseInt(conf.get(1));
+        this.nbOfGroups = Integer.parseInt(conf.get(2));
 
-            while ((line = confReader.readLine()) != null) {
-                String[] values = line.split(confDelimiter);
-                conf.add(values[1]);
-            }
-            confReader.close();
+        /* Gets the list of victims */
+        this.victims = retrieveVictims(mailFile);
 
-            this.host = conf.get(0);
-            this.port = Integer.parseInt(conf.get(1));
-            this.nbOfGroups = Integer.parseInt(conf.get(2));
-
-            /* Gets the list of victims */
-            BufferedReader mailsReader = new BufferedReader(new FileReader(mailFile));
-
-            while ((line = mailsReader.readLine()) != null) {
-                this.victims.add(line);
-            }
-            mailsReader.close();
-
-            /* Gets the list of pranks */
-            BufferedReader pranksReader = new BufferedReader(new FileReader(prankFile));
-
-            String tempMessage = "";
-
-            while ((line = pranksReader.readLine()) != null) {
-                if (!line.equals(msgDelimiter)) {
-                    tempMessage += line + "\n";
-                } else {
-                    this.pranks.add(tempMessage);
-                    tempMessage = "";
-                }
-            }
-
-            pranksReader.close();
-
-        }  catch (IOException e) {
-            e.printStackTrace();
-        }
+        /* Gets the list of pranks */
+        this.pranks = retrievePranks(prankFile, msgDelimiter);
     }
+
 
     public String getHost() {
         return this.host;
@@ -89,7 +58,7 @@ public class Configuration {
         return this.nbOfGroups;
     }
 
-    public List<String> getpranks() {
+    public List<String> getPranks() {
         return this.pranks;
     }
 
@@ -97,5 +66,71 @@ public class Configuration {
         return this.victims;
     }
 
+    public List<String> retrieveConf(File file, String delimiter) {
+
+        List<String> conf = new ArrayList<String>();
+
+        try {
+            BufferedReader confReader = new BufferedReader(new FileReader(file));
+            String line;
+
+            while ((line = confReader.readLine()) != null) {
+                String[] values = line.split(delimiter);
+                conf.add(values[1]);
+            }
+            confReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return conf;
+    }
+
+    public List<String> retrieveVictims(File file) {
+
+        List<String> victims = new ArrayList<String>();
+
+        try {
+            BufferedReader mailsReader = new BufferedReader(new FileReader(file));
+
+            String line;
+            while ((line = mailsReader.readLine()) != null) {
+                victims.add(line);
+            }
+            mailsReader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return victims;
+    }
+
+    public List<String> retrievePranks(File file, String delimiter) {
+
+        List<String> pranks = new ArrayList<String>();
+
+        try {
+            BufferedReader pranksReader = new BufferedReader(new FileReader(file));
+
+            String tempMessage = "";
+            String line;
+
+            while ((line = pranksReader.readLine()) != null) {
+                if (!line.equals(delimiter)) {
+                    tempMessage += line + "\n";
+                } else {
+                    pranks.add(tempMessage);
+                    tempMessage = "";
+                }
+            }
+            pranksReader.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return pranks;
+    }
 
 }
