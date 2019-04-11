@@ -33,14 +33,13 @@ public class Configuration {
         this.victims = new ArrayList<String>();
         this.pranks = new ArrayList<String>();
 
-        final String confDelimiter = "=";
         final String msgDelimiter = "---";
         File confFile = new File(conf);
         File mailFile = new File(victims);
         File prankFile = new File(pranks);
 
         /* Gets server configuration and number of groups */
-        List<String> configs = retrieveConf(confFile, confDelimiter);
+        List<String> configs = retrieveConf(confFile);
 
         this.host = configs.get(0);
         this.port = Integer.parseInt(configs.get(1));
@@ -87,7 +86,7 @@ public class Configuration {
         return this.victims;
     }
 
-    public List<String> retrieveConf(File file, String delimiter) {
+    public List<String> retrieveConf(File file) {
 
         List<String> conf = new ArrayList<String>();
         Properties prop = new Properties();
