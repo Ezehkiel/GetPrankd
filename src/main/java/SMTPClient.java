@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
@@ -14,55 +11,60 @@ public class SMTPClient {
     private Socket connection;
     private BufferedReader input;
     private PrintWriter output;
+    private boolean requireAuthentication = false;
 
-    public SMTPClient(String host, int port, Mail mail) {
+    public SMTPClient(String host, int port, Mail mail, String username, String password) {
 
         try {
             this.connection = new Socket(host, port);
-            this.input = new BufferedReader(new InputStreamReader(this.connection.getInputStream()));
-            this.output = new PrintWriter(this.connection.getOutputStream());
+            this.input = new BufferedReader(new InputStreamReader(this.connection.getInputStream(), "UTF-8"));
+            this.output = new PrintWriter(new OutputStreamWriter(this.connection.getOutputStream(), "UTF-8"));
 
             /* First, the server sends its information (code 220) */
             checkResponseCode("220");
 
             /* The client sends an EHLO message */
-            sendEhlo("local");
+            sendSimpleMessage("EHLO local");
 
-            /* The server repond with acknowledgments (code 250) */
+            /* The server responds with acknowledgments (code 250).
+             * The method updates requireAuthentication */
             checkResponseCode("250");
 
-            // IF THE SERVER RESPOND WITH A "250-AUTH LOGIN" :
-            /*
-            ...
-            250-AUTH PLAIN LOGIN CRAM-MD5
-            AUTH LOGIN
-            334 VXNlcm5hbWU6
-            MjZmZmY1ZWM3ZGRjMzM=
-            334 UGFzc3dvcmQ6
-            MjQzNTQxZTBhMmQ2Y2I=
-            235 2.0.0 OK
-            MAIL FROM: <from@smtp.mailtrap.io>
-            ...
-            */
-
+            /* If the server requires authentication, the clients sends the login information */
+            if (this.requireAuthentication) {
+                sendSimpleMessage("AUTH LOGIN");
+                sendSimpleMessage(username);
+                checkResponseCode("334");
+                sendSimpleMessage(password);
+                checkResponseCode("235");
+            }
 
             /* The client continues with MAIL FROM: */
             sendMailFrom(mail.getFrom());
 
-            /* The server repond with an acknowledgment (code 250) */
+            /* The server responds with an acknowledgment (code 250) */
             checkResponseCode("250");
 
             /* The client continues with RCPT TO: */
             sendRcptTo(mail.getTo());
 
             /* The client continues with DATA */
-            sendData();
+            sendSimpleMessage("DATA");
 
-            /* The server repond with an acknowledgment (code 354) */
+            /* The server responds with an acknowledgment (code 354) */
             checkResponseCode("354");
 
             /* The client then sends the message */
             sendMessage(mail.getFrom(), mail.getTo(), mail.getMessage().getMessage());
+
+            /* The server responds with an acknowledgment (code 250) */
+            //checkResponseCode("250");
+
+            /* The client then sends a QUIT */
+            sendSimpleMessage("QUIT");
+
+            /* The server responds with an acknowledgment (code 221) */
+            //checkResponseCode("221");
 
             this.input.close();
             this.output.flush();
@@ -76,12 +78,18 @@ public class SMTPClient {
     private void checkResponseCode(String code) {
         String[] response;
         String line;
+
         try {
             do {
                 line = this.input.readLine();
                 if (line != null) {
                     System.out.println(line);
                     response = line.split(" ");
+
+                    if (response[0].equals("250-AUTH")) {
+                        this.requireAuthentication = true;
+                    }
+
                 } else {
                     throw new RuntimeException("The SMTP server respond with an error");
                 }
@@ -92,22 +100,16 @@ public class SMTPClient {
         }
     }
 
-    private void sendEhlo(String ehloMessage) {
-        this.output.println("EHLO " + ehloMessage);
-        System.out.println("EHLO " + ehloMessage);
-        this.output.flush();
-    }
-
     private void sendMailFrom(Victim mailFrom) {
-        this.output.println("MAIL FROM: " + mailFrom.getMailAddress());
-        System.out.println("MAIL FROM: " + mailFrom.getMailAddress());
+        this.output.println("MAIL FROM: <" + mailFrom.getMailAddress() + ">");
+        System.out.println("MAIL FROM: <" + mailFrom.getMailAddress() + ">");
         this.output.flush();
     }
 
     private void sendRcptTo(List<Victim> rcptTo) {
         for (Victim rcpt : rcptTo) {
-            this.output.println("RCPT TO: " + rcpt.getMailAddress());
-            System.out.println("RCPT TO: " + rcpt.getMailAddress());
+            this.output.println("RCPT TO: <" + rcpt.getMailAddress() + ">");
+            System.out.println("RCPT TO: <" + rcpt.getMailAddress() + ">");
             this.output.flush();
 
             /* The server repond with an acknowledgment (code 250) */
@@ -115,25 +117,25 @@ public class SMTPClient {
         }
     }
 
-    private void sendData() {
-        this.output.println("DATA");
-        System.out.println("DATA");
+    private void sendSimpleMessage(String message) {
+        this.output.println(message);
+        System.out.println(message);
         this.output.flush();
     }
 
-    private void sendMessage(Victim from, List<Victim> tos, String message) {
+    private void sendMessage(Victim from, List<Victim> to, String message) {
         this.output.println("From: " + from.getMailAddress());
         System.out.println("From: " + from.getMailAddress());
         this.output.flush();
 
 
-        for (int j = 0; j < tos.size(); ++j) {
+        for (int j = 0; j < to.size(); ++j) {
             if (j == 0) {
-                this.output.print("To: " + tos.get(j).getMailAddress());
-                System.out.print("To: " + tos.get(j).getMailAddress());
+                this.output.print("To: " + to.get(j).getMailAddress());
+                System.out.print("To: " + to.get(j).getMailAddress());
             } else {
-                this.output.print(", " + tos.get(j).getMailAddress());
-                System.out.print(", " + tos.get(j).getMailAddress());
+                this.output.print(", " + to.get(j).getMailAddress());
+                System.out.print(", " + to.get(j).getMailAddress());
             }
             this.output.flush();
         }
