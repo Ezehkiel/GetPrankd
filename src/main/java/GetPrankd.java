@@ -1,5 +1,11 @@
+import org.apache.commons.cli.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Base64;
+
+import static java.lang.Thread.sleep;
 
 /**
  * This class uses the data gathered from Configuration to create Victim, Group and Prank objects. Once everything is
@@ -15,13 +21,23 @@ public class GetPrankd {
     private List<Group> groups;
     private List<Mail> mails;
     private int nbOfGroups;
+    private String username;
+    private String password;
 
     /**
      *
      */
-    public GetPrankd() {
+    public GetPrankd(Configuration configuration) {
 
-        this.config = new Configuration();
+        this.config = configuration;
+
+        /* If there is a username and a password, gets and converts them in base64 */
+        if (config.hasLogin()) {
+            //this.username = Base64.getEncoder().encodeToString((config.getUsername()).getBytes());
+            //this.password = Base64.getEncoder().encodeToString((config.getPassword()).getBytes());
+            this.username = config.getUsername();
+            this.password = config.getPassword();
+        }
 
         /* Gets number of groups */
         this.nbOfGroups = this.config.getNbOfGroups();
@@ -60,7 +76,7 @@ public class GetPrankd {
 
         /* Once the mails are ready, they are passed to the SMTP client, which is responsible for sending them */
         for (Mail mail : this.mails) {
-            new SMTPClient(this.config.getHost(), this.config.getPort(), mail);
+            new SMTPClient(this.config.getHost(), this.config.getPort(), mail, this.username, this.password);
         }
     }
 
@@ -116,6 +132,41 @@ public class GetPrankd {
      */
     public static void main(String[] args) {
 
-        new GetPrankd();
+        /* Parses arguments */
+        Options options = new Options();
+
+        Option confFile = new Option("c", "configfile", true, "config file");
+        confFile.setRequired(true);
+        options.addOption(confFile);
+
+        Option pranksFile = new Option("p", "pranksfile", true, "pranks file");
+        pranksFile.setRequired(true);
+        options.addOption(pranksFile);
+
+        Option victimsFile = new Option("v", "victimsfile", true, "victims file");
+        victimsFile.setRequired(true);
+        options.addOption(victimsFile);
+
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        CommandLine cmd;
+
+        try {
+            cmd = parser.parse(options, args);
+            String config = cmd.getOptionValue("configfile");
+            String pranks = cmd.getOptionValue("pranksfile");
+            String victims = cmd.getOptionValue("victimsfile");
+
+            System.out.println(config + " " + pranks + " " + victims);
+
+            Configuration configuration = new Configuration(config, pranks, victims);
+            new GetPrankd(configuration);
+
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            formatter.printHelp("utility-name", options);
+
+            System.exit(1);
+        }
     }
 }

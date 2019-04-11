@@ -8,8 +8,8 @@ public class ConfigurationTest {
 
     @Test
     public void configurationShouldBeTheRightOnes() {
-        File testConfFile = new File("./conf/conf.txt");
-        Configuration configuration = new Configuration();
+        File testConfFile = new File("conf/mockmock_conf.properties");
+        Configuration configuration = new Configuration("conf/mockmock_conf.properties", "conf/pranks.utf8", "conf/victims.utf8");
         List<String> confTest = configuration.retrieveConf(testConfFile, "=");
 
         String testHost = confTest.get(0);
@@ -27,8 +27,8 @@ public class ConfigurationTest {
 
     @Test
     public void victimsShouldBeTheRightOnes() {
-        File mailFile = new File("./conf/victims.txt");
-        Configuration config = new Configuration();
+        File mailFile = new File("conf/victims.utf8");
+        Configuration config = new Configuration("conf/mockmock_conf.properties", "conf/pranks.utf8", "conf/victims.utf8");
 
         List<String> victimsTest = config.retrieveVictims(mailFile);
         List<String> victims = config.getVictims();
@@ -38,13 +38,12 @@ public class ConfigurationTest {
 
     @Test
     public void pranksShouldBeTheRightOnes() {
-        File prankFile = new File("./conf/pranks.txt");
-        Configuration config = new Configuration();
+        File prankFile = new File("conf/pranks.utf8");
+        Configuration config = new Configuration("conf/mockmock_conf.properties", "conf/pranks.utf8", "conf/victims.utf8");
 
         List<String> pranksTest = config.retrievePranks(prankFile, "---");
         List<String> pranks = config.getPranks();
 
         assertArrayEquals(pranks.toArray(), pranksTest.toArray());
     }
-
 }
