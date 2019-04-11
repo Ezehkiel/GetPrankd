@@ -31,24 +31,35 @@ The SMTP server runs on a Docker container. To create the Docker image, do the f
 
    You can choose another name if needed.
 
-   **Note :** MockMock default ports are 25 (for SMTP) and 8282 (the web interface). 
+   **Note :** MockMock default ports are 25 (for SMTP) and 8282 (for the web interface). 
 
 ### Running a prank campaign
 
-Before the fun, a few work must be done. In the folder `conf`, you will find 3 files that will allow you to run your campaign.
+Before the fun, a few work must be done. In the folder `conf`, you will have to provide 3 files that will allow you to run your campaign. Don't worry, they are already there for you to quickly run the campaign.
 
-#### conf.txt
+#### Configuration file
 
-This file contains the server's configuration and port, and also the number of groups that will be created. You are free to modify the `numberOfGroups` value. The client will automatically assign an equal number of victims in each group.
+This file must contains these fields :
 
-#### pranks.txt
+* `smtpServerIp=`, by default 192.168.99.100 (Docker)
+* `smtpServerPort=`, by default 25
+* `numberOfGroups=`
 
-This file contains the pranks. Once the campaign is started, the client will choose randomly between one of these pranks. **If you wish to add a new prank, beware the following rules** :
+You are free to modify the `numberOfGroups` value. The client will automatically assign an equal number of victims in each group. If the SMTP server requires an authentication, these additional fields can be added :
+
+* `username=`
+* `password=`
+
+**Username and password must be base64 encoded**.
+
+#### Prank file
+
+This file will contains the pranks. Once the campaign is started, the client will choose randomly between one of these pranks. **If you wish to add a new prank, beware the following rules** :
 
 - Begin you prank with `Subject:`
 - End your prank with the delimiter `---`
 
-#### victims.txt
+#### Victim file
 
 This file contains each victim's mail address. **Don't forget that there must be at least 3 victims per group while filling this file**. 
 
@@ -59,7 +70,12 @@ Example : if you provide 8 addresses, the maximum group size is 2.
 You're all set !  To begin the campaign, run the mock server and start the client.
 
 1. From the Docker shell, run a container with the following command : `docker run -p 25000:25 -p 8282:8282 heigvd/smtpserver`
-2. Start the client
+
+2. From a shell, go to the project location, then launch the jar with the following command :
+
+   `java -jar target/Lab_SMTP-1.0-SNAPSHOT-launcher.jar -c conf/mockmock_conf.properties -v conf/victims.utf8 -p conf/pranks.utf8`
+
+   Parameters work as follow : `-c` to choose a configuration file, `-v` to choose a victims file and `-p` to choose a pranks file. You are free to create your own files and use them !
 
 You can now have a look at the result by opening your Internet browser and navigate to [http://localhost:8282].
 
@@ -71,7 +87,9 @@ GetPrankd uses Java with an Object Oriented implementation. The code structure i
 
 #### GetPrankd
 
-The main entrance of the program. GetPrankd is responsible for gathering all the data and use it to produce a Mail. It first check if there is enough victims for the number of groups. Then, it constructs a Victim object for every mail address and a Prank object for every prank. GetPrankd then generates groups and populate them with the victims. It also choose a random prank among all given pranks. 
+The main entrance of the program. Contains the main, in which arguments are read and used to create a Configuration object (see this class below). 
+
+GetPrankd is responsible for gathering all the data and use it to produce a Mail. It first check if there is enough victims for the number of groups. Then, it constructs a Victim object for every mail address and a Prank object for every prank. GetPrankd then generates groups and populate them with the victims. It also choose a random prank among all given pranks. 
 
 Once this is done, a Mail object is created for every group, containing the prank and a group. Mails are then given to an SMTPClient, which will handle the delivery. GetPrankd plays a major role in the program, since it make the use of every other classes.
 
@@ -114,8 +132,6 @@ The last step of the run. The SMTPClient is responsible for opening a TCP connec
 11. Server send an acknowledgment (code 250)
 12. Client sends a QUIT
 13. Server closes the transmission
-
-Significant fields are the `MAIL FROM`
 
 ## References
 

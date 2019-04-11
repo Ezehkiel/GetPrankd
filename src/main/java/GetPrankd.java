@@ -3,10 +3,6 @@ import org.apache.commons.cli.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.Base64;
-
-import static java.lang.Thread.sleep;
-
 /**
  * This class uses the data gathered from Configuration to create Victim, Group and Prank objects. Once everything is
  * ready, Mail objects are created and passed to the SMTPClient.
@@ -52,7 +48,6 @@ public class GetPrankd {
         List<String> addresses = config.getVictims();
         for (String address : addresses) {
             this.victims.add(new Victim(address));
-
         }
 
         /* Creates Prank objects from the given pranks file */
@@ -60,7 +55,6 @@ public class GetPrankd {
         for (String message : config.getPranks()) {
             this.pranks.add(new Prank(message));
         }
-
 
         /* Creates Group objects */
         this.groups = makeGroups();
@@ -105,9 +99,10 @@ public class GetPrankd {
         int nbVictimsPerGroup = this.victims.size() / this.nbOfGroups;
         int remainder = this.victims.size() - (this.nbOfGroups * (nbVictimsPerGroup));
         List<Group> groups = new ArrayList<Group>();
-        int i = 0;
+        int i;
 
 
+        /* Pushes an equal number of victims in each group. The first one is the sender */
         for (i = 0; i < this.nbOfGroups; ++i) {
             groups.add(new Group());
             for (int j = 0; j < nbVictimsPerGroup; ++j) {
@@ -119,6 +114,7 @@ public class GetPrankd {
             }
         }
 
+        /* Treats remainder if there is some */
         int j = 0;
         for (int k = 0; k < remainder; k++) {
             groups.get(k).addRecipient(this.victims.get((i * nbVictimsPerGroup) + j + k));
@@ -156,8 +152,6 @@ public class GetPrankd {
             String config = cmd.getOptionValue("configfile");
             String pranks = cmd.getOptionValue("pranksfile");
             String victims = cmd.getOptionValue("victimsfile");
-
-            System.out.println(config + " " + pranks + " " + victims);
 
             Configuration configuration = new Configuration(config, pranks, victims);
             new GetPrankd(configuration);
