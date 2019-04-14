@@ -105,7 +105,7 @@ As long as a username and a password are provided in the configuration file, thi
 
 GetPrankd uses Java with an Object Oriented implementation. The code structure is the following :
 
-![UML](figures/Top-Level Package.png)
+![UML](figures/Top-Level_Package_resize.png)
 
 #### GetPrankd
 
