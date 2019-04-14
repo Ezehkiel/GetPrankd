@@ -19,7 +19,7 @@ Once fed with these data, the client automatically sends the pranks to all group
 
 The client is build using Java and to function, you need a **Java Runtime Environment** (there is no need to install a JRE if you already have a JDK installed). 
 
-You will also need to install **Docker Toolbox** in order to launch the SMTP server in a container. Docker uses Virtual Box as a host for its virtual machine, so if you haven't it installed yet, don't forget to check "Install Virtual Box" during Docker Toolbox installation. Docker Toolbox can be found [here](https://docs.docker.com/toolbox/overview/).
+You will also need to install **Docker Toolbox** in order to launch the mock SMTP server in a container. Docker uses Virtual Box as a host for its virtual machine, so if you haven't it installed yet, don't forget to check "Install Virtual Box" during Docker Toolbox installation. Docker Toolbox can be found [here](https://docs.docker.com/toolbox/overview/).
 
 ### Setting up the mock SMTP server 
 
@@ -71,19 +71,41 @@ You're all set !  To begin the campaign, run the mock server and start the clien
 
 1. From the Docker shell, run a container with the following command : `docker run -p 25000:25 -p 8282:8282 heigvd/smtpserver`
 
-2. From a shell, go to the project location, then launch the jar with the following command :
+2. From a shell, **go to the project location**, then launch the jar with the following command :
 
    `java -jar target/Lab_SMTP-1.0-SNAPSHOT-launcher.jar -c conf/mockmock_conf.properties -v conf/victims.utf8 -p conf/pranks.utf8`
 
-   Parameters work as follow : `-c` to choose a configuration file, `-v` to choose a victims file and `-p` to choose a pranks file. You are free to create your own files and use them !
+   Parameters work as follow : `-c` to choose a configuration file, `-v` to choose a victims file and `-p` to choose a pranks file. You are free to create your own files and use them.
 
 You can now have a look at the result by opening your Internet browser and navigate to [http://localhost:8282].
+
+### Usage example
+
+Here is what happen when you send a prank using MockMock SMTP Server : first, the client displays all the communication with the server on the terminal.
+
+![mockmock2](figures/mockmock_prank_campaign2.png)
+
+As we can see, one of the victims has been chosen as the sender, while the others are the recipients. We can now go to our web browser and open [http://localhost:8282]. Here, the mock SMTP Server displays all the messages sent.
+
+![mockmock3](figures/mockmock_prank_campaign3.png)
+
+If we click on the subject, we are redirected on the message information page, where we can see more detailed data.
+
+![mockmock4](figures/mockmock_prank_campaign4.png)
+
+#### Authentication
+
+In case the SMTP server requires authentication, there is one more step in the communication between the client and the server. This step is visible on the console during the campaign.
+
+![auth](figures/SMTP_AUTH.png)
+
+As long as a username and a password are provided in the configuration file, this step is fully handled by the client.
 
 ### Implementation description
 
 GetPrankd uses Java with an Object Oriented implementation. The code structure is the following :
 
-[img]
+![UML](figures/Top-Level Package.png)
 
 #### GetPrankd
 
