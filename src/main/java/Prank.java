@@ -9,7 +9,7 @@ public class Prank {
         this.message = message;
     }
 
-    public String getMessage() {
+    String getMessage() {
         return this.message;
     }
 }

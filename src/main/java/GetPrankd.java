@@ -44,14 +44,14 @@ public class GetPrankd {
         }
 
         /* Creates Victim objects from their mail address */
-        this.victims = new ArrayList<Victim>();
+        this.victims = new ArrayList<>();
         List<String> addresses = config.getVictims();
         for (String address : addresses) {
             this.victims.add(new Victim(address));
         }
 
         /* Creates Prank objects from the given pranks file */
-        this.pranks = new ArrayList<Prank>();
+        this.pranks = new ArrayList<>();
         for (String message : config.getPranks()) {
             this.pranks.add(new Prank(message));
         }
@@ -63,7 +63,7 @@ public class GetPrankd {
         int index = (int) (Math.random() * this.pranks.size());
 
         /* Creates Mail objects */
-        this.mails = new ArrayList<Mail>();
+        this.mails = new ArrayList<>();
         for (Group group : this.groups) {
             this.mails.add(new Mail(group.getSender(), group.getRecipients(), this.pranks.get(index)));
         }
@@ -98,7 +98,7 @@ public class GetPrankd {
 
         int nbVictimsPerGroup = this.victims.size() / this.nbOfGroups;
         int remainder = this.victims.size() - (this.nbOfGroups * (nbVictimsPerGroup));
-        List<Group> groups = new ArrayList<Group>();
+        List<Group> groups = new ArrayList<>();
         int i;
 
 

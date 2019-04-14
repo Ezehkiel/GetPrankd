@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -8,13 +9,6 @@ import java.util.Properties;
  * the SMTP server IP address and port, the number of groups, the mail addresses and the pranks.
  */
 public class Configuration {
-
-    /* These constants define where the configuration files will be stored. The path is relative
-     * to where the Java application is invoked. */
-    private static String ROOT = "./conf/";
-    private static String CONF = ROOT + "conf.properties";
-    private static String VICTIMS = ROOT + "victims.utf8";
-    private static String PRANKS = ROOT + "pranks.utf8";
 
     private String host;
     private int port;
@@ -30,8 +24,8 @@ public class Configuration {
      */
     public Configuration(String conf, String pranks, String victims) {
 
-        this.victims = new ArrayList<String>();
-        this.pranks = new ArrayList<String>();
+        this.victims = new ArrayList<>();
+        this.pranks = new ArrayList<>();
 
         final String msgDelimiter = "---";
         File confFile = new File(conf);
@@ -58,42 +52,42 @@ public class Configuration {
     }
 
 
-    public String getHost() {
+    String getHost() {
         return this.host;
     }
 
-    public int getPort() {
+    int getPort() {
         return this.port;
     }
 
-    public int getNbOfGroups() {
+    int getNbOfGroups() {
         return this.nbOfGroups;
     }
 
-    public String getUsername() {
+    String getUsername() {
         return this.username;
     }
 
-    public String getPassword() {
+    String getPassword() {
         return this.password;
     }
 
-    public List<String> getPranks() {
+    List<String> getPranks() {
         return this.pranks;
     }
 
-    public List<String> getVictims() {
+    List<String> getVictims() {
         return this.victims;
     }
 
-    public List<String> retrieveConf(File file) {
+    List<String> retrieveConf(File file) {
 
-        List<String> conf = new ArrayList<String>();
+        List<String> conf = new ArrayList<>();
         Properties prop = new Properties();
         boolean hasUsername = false, hasPassword = false;
 
         try {
-            Reader confReader = new InputStreamReader(new FileInputStream(file), "UTF-8");
+            Reader confReader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
             prop.load(confReader);
             conf.add(prop.getProperty("smtpServerIp"));
             conf.add(prop.getProperty("smtpServerPort"));
@@ -121,12 +115,12 @@ public class Configuration {
         return conf;
     }
 
-    public List<String> retrieveVictims(File file) {
+    List<String> retrieveVictims(File file) {
 
-        List<String> victims = new ArrayList<String>();
+        List<String> victims = new ArrayList<>();
 
         try {
-            BufferedReader mailsReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            BufferedReader mailsReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 
             String line;
             while ((line = mailsReader.readLine()) != null) {
@@ -141,12 +135,12 @@ public class Configuration {
         return victims;
     }
 
-    public List<String> retrievePranks(File file, String delimiter) {
+    List<String> retrievePranks(File file, String delimiter) {
 
-        List<String> pranks = new ArrayList<String>();
+        List<String> pranks = new ArrayList<>();
 
         try {
-            BufferedReader pranksReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+            BufferedReader pranksReader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 
             String tempMessage = "";
             String line;
@@ -168,7 +162,7 @@ public class Configuration {
         return pranks;
     }
 
-    public boolean hasLogin() {
+    boolean hasLogin() {
         return this.hasLogin;
     }
 }

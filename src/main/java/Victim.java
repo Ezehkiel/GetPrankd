@@ -9,7 +9,7 @@ public class Victim {
         this.mailAddress = mailAddress;
     }
 
-    public String getMailAddress() {
+    String getMailAddress() {
         return this.mailAddress;
     }
 }
