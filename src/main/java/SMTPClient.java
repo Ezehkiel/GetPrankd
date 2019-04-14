@@ -33,6 +33,7 @@ public class SMTPClient {
             /* If the server requires authentication, the clients sends the login information */
             if (this.requireAuthentication) {
                 sendSimpleMessage("AUTH LOGIN");
+                checkResponseCode("334");
                 sendSimpleMessage(username);
                 checkResponseCode("334");
                 sendSimpleMessage(password);
@@ -45,7 +46,8 @@ public class SMTPClient {
             /* The server responds with an acknowledgment (code 250) */
             checkResponseCode("250");
 
-            /* The client continues with RCPT TO: */
+            /* The client continues with RCPT TO:
+            *  This function checks response codes. */
             sendRcptTo(mail.getTo());
 
             /* The client continues with DATA */
@@ -57,14 +59,8 @@ public class SMTPClient {
             /* The client then sends the message */
             sendMessage(mail.getFrom(), mail.getTo(), mail.getMessage().getMessage());
 
-            /* The server responds with an acknowledgment (code 250) */
-            //checkResponseCode("250");
-
             /* The client then sends a QUIT */
             sendSimpleMessage("QUIT");
-
-            /* The server responds with an acknowledgment (code 221) */
-            //checkResponseCode("221");
 
             this.input.close();
             this.output.flush();
