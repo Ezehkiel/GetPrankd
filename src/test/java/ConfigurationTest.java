@@ -10,7 +10,7 @@ public class ConfigurationTest {
     public void configurationShouldBeTheRightOnes() {
         File testConfFile = new File("conf/mockmock_conf.properties");
         Configuration configuration = new Configuration("conf/mockmock_conf.properties", "conf/pranks.utf8", "conf/victims.utf8");
-        List<String> confTest = configuration.retrieveConf(testConfFile, "=");
+        List<String> confTest = configuration.retrieveConf(testConfFile);
 
         String testHost = confTest.get(0);
         int testPort = Integer.parseInt(confTest.get(1));
