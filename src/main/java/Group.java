@@ -7,23 +7,23 @@ import java.util.List;
 public class Group {
 
     private Victim sender;
-    private List<Victim> recipients = new ArrayList<Victim>();
+    private List<Victim> recipients = new ArrayList<>();
 
     public Group() {}
 
-    public void addSender(Victim sender){
+    void addSender(Victim sender){
         this.sender = sender;
     }
 
-    public void addRecipient(Victim recipient){
+    void addRecipient(Victim recipient){
         this.recipients.add(recipient);
     }
 
-    public Victim getSender() {
+    Victim getSender() {
         return this.sender;
     }
 
-    public List<Victim> getRecipients() {
+    List<Victim> getRecipients() {
         return this.recipients;
     }
 }

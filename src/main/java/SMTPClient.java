@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,8 +18,8 @@ public class SMTPClient {
 
         try {
             this.connection = new Socket(host, port);
-            this.input = new BufferedReader(new InputStreamReader(this.connection.getInputStream(), "UTF-8"));
-            this.output = new PrintWriter(new OutputStreamWriter(this.connection.getOutputStream(), "UTF-8"));
+            this.input = new BufferedReader(new InputStreamReader(this.connection.getInputStream(), StandardCharsets.UTF_8));
+            this.output = new PrintWriter(new OutputStreamWriter(this.connection.getOutputStream(), StandardCharsets.UTF_8));
 
             /* First, the server sends its information (code 220) */
             checkResponseCode("220");

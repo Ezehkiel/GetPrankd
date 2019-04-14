@@ -14,15 +14,15 @@ public class Mail {
         this.message = message;
     }
 
-    public Victim getFrom() {
+    Victim getFrom() {
         return this.from;
     }
 
-    public List<Victim> getTo() {
+    List<Victim> getTo() {
         return this.to;
     }
 
-    public Prank getMessage() {
+    Prank getMessage() {
         return this.message;
     }
 }
